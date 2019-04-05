@@ -1,0 +1,18 @@
+{
+    "name": "jeydotc/nev",
+    "description": "Description of project nev.",
+    "authors": [
+        {
+            "name": "Jeysson Guevara",
+            "email": "jeysson.guevara@jobsity.io"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "Nev": "src/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "7.5.6"
+    }
+}
