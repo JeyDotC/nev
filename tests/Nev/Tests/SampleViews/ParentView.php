@@ -1,12 +1,15 @@
 <?php
-require_once './vendor/autoload.php';
 
-abstract class ParentView extends Nev\View
+namespace Nev\Tests\SampleViews;
+
+use Nev\Html;
+use Nev\View;
+
+abstract class ParentView extends View
 {
+    use Html;
 
-    use \Nev\Html;
-
-    protected function render() { ?>
+    protected final function render() { ?>
         <!DOCTYPE html>
         <html>
             <head>
@@ -33,40 +36,4 @@ abstract class ParentView extends Nev\View
     protected function scripts() { }
 
     protected function styles() { }
-
 }
-
-class SomeViewModel
-{
-
-    public $id;
-    public $name;
-
-    function __construct($id, $name) {
-        $this->id = $id;
-        $this->name = $name;
-    }
-
-}
-
-class ChildView extends ParentView
-{
-
-    /**
-     *
-     * @var SomeViewModel 
-     */
-    protected $model;
-
-    protected function body() { ?>
-        <h1>Hello, user Nº <?=$this->model->id?></h1>
-        <p>
-            Sorry to treat you in such a cold manner Mr <?=$this->model->name?>, my programmer just made me that way.
-        </p>
-    <? 
-    }
-
-}
-
-(new ChildView())->display(new SomeViewModel(56645, "John Doe"));
-

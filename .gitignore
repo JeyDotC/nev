@@ -21,7 +21,6 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
-nbproject/
 sh.exe.stackdump
 
 # Created by https://www.gitignore.io/api/osx

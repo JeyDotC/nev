@@ -1,9 +1,14 @@
 <?php
-require_once './vendor/autoload.php';
+namespace Nev\Tests\SampleViews;
 
-class SampleView extends Nev\View
-{
+use Nev\View;
 
+/**
+ * Description of BasicView
+ *
+ * @author Win 10
+ */
+class BasicView extends View {
     use \Nev\Html;
 
     protected function render() {
@@ -27,8 +32,4 @@ class SampleView extends Nev\View
         </html>
         <?
     }
-
 }
-
-(new SampleView())->display();
-
