@@ -4,6 +4,7 @@ namespace Nev\Tests;
 
 use Nev\Tests\SampleViews\BasicView;
 use Nev\Tests\SampleViews\ChildView;
+use Nev\Tests\SampleViews\CompositeView;
 use Nev\Tests\SampleViews\SomeViewModel;
 use Nev\View;
 use PHPUnit\Framework\TestCase;
@@ -30,9 +31,6 @@ class ViewTest extends TestCase {
         $view->display($model);
         $result = ob_get_clean();
        
-//        $file = DATA_DIR . "/" . str_replace(DIRECTORY_SEPARATOR, '', get_class($view)) . '.html';
-//        file_put_contents($file, $result);
-
         // Assert
         $this->assertEquals($expectedResult, $result);
     }
@@ -85,6 +83,15 @@ class ViewTest extends TestCase {
                 new ChildView(),
                 new SomeViewModel(1, 'John Doe'),
                 file_get_contents(DATA_DIR . '/ChildView-display.html')
+            ],
+            'Composite View' => [
+                new CompositeView(),
+                [
+                    new SomeViewModel(1, 'Johny', 'Be good'),
+                    new SomeViewModel(2, 'Jenny', 'Be cool!'),
+                    new SomeViewModel(3, 'Jinny', 'Be smooth'),
+                ],
+                file_get_contents(DATA_DIR . '/CompositeView-display.html')
             ]
         ];
     }
