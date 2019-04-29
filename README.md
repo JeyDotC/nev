@@ -68,7 +68,7 @@ class BasicView extends View {
     // Implement the abstract render method. (And yes, I stealed the syntax from react).
     protected function render() {
         ?>
-        <!-- As a recommendation, do as much HTML as you can so your view remains clear --!>
+        <!-- As a recommendation, do as much HTML as you can so your view remains clear -->
         <!DOCTYPE html>
         <html>
             <head>
