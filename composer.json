@@ -1,6 +1,9 @@
 {
     "name": "jeydotc/nev",
-    "description": "Description of project nev.",
+    "description": "Use PHP as your templating system!",
+    "homepage": "https://github.com/JeyDotC/nev",
+    "license": "MIT",
+    "keywords": ["templating", "twig", "smarty", "blade"],
     "authors": [
         {
             "name": "Jeysson Guevara",
