@@ -23,8 +23,8 @@ class GenericAlertComponent extends View
     {
         $attrs = $this->extraProperties();
         ?>
-        <div <? $this->attrs($attrs) ?>
-                class="<? $this->classes($this->className, "alert alert-{$this->status}", [ 'alert-dismissible fade show' => $this->dismissible ] ) ?>"
+        <div <?= $this->attrs($attrs) ?>
+                class="<?= $this->classes($this->className, "alert alert-{$this->status}", ['alert-dismissible fade show' => $this->dismissible]) ?>"
                 role="alert">
 
             <?

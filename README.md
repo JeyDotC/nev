@@ -537,6 +537,291 @@ The `renderPart` method will take care of checking the type of value for your co
 
 ### Dealing with CSS classes
 
+Configure CSS classes could be a bit cumbersome. Fortunately, the Html trait provides a comfortable way to add them dynamically.
 
+Following with our example, lets first change the way we add the classes:
 
-TODO: Document views composition, and utility traits.
+```php
+<?php
+ 
+ namespace Nev\Tests\SampleViews;
+ 
+ use Nev\Html;
+ use Nev\View;
+ 
+ final class AlertComponent extends View
+ {
+     use Html;
+     
+     // Some content omitted...
+     
+     protected function render()
+     { ?>
+         <div class="<?=$this->classes("alert", "alert-info", "alert-dismissible", "fade", "show")?>" role="alert">
+             <h4 class="alert-heading"><?$this->renderPart($this->title)?></h4>
+             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                 <span aria-hidden="true">&times;</span>
+             </button>
+             <?$this->renderPart($this->title)?>
+         </div>
+         <?
+     }
+ }
+ 
+``` 
+
+As you can see, all I do is to call `$this->classes(...)` method and send each class as an individual string. Not much of an improvement, but bear with me, things will get better.
+
+Now, let's add a status attribute:
+
+```php
+<?php
+ 
+ namespace Nev\Tests\SampleViews;
+ 
+ use Nev\Html;
+ use Nev\View;
+ 
+ final class AlertComponent extends View
+ {
+     use Html;
+     
+     // Some content omitted...
+     protected $status = 'info';
+     
+     protected function render()
+     { ?>
+         <div class="<?=$this->classes("alert", "alert-{$this->status}", "alert-dismissible", "fade", "show")?>" role="alert">
+             <h4 class="alert-heading"><?$this->renderPart($this->title)?></h4>
+             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                 <span aria-hidden="true">&times;</span>
+             </button>
+             <?$this->renderPart($this->title)?>
+         </div>
+         <?
+     }
+ }
+ 
+``` 
+
+Ok, now we can set the alert's status to any of the bootstrap's supported options (info, warning, danger...). But that still not sell the need for that method, so, what about adding the ability to decide if the component is dismissible:
+
+```php
+<?php
+ 
+ namespace Nev\Tests\SampleViews;
+ 
+ use Nev\Html;
+ use Nev\View;
+ 
+ final class AlertComponent extends View
+ {
+     use Html;
+     
+     // Some content omitted...
+     protected $status = 'info';
+     
+     protected $dismissible = true;
+     
+     protected function render()
+     { ?>
+         <div class="<?=$this->classes(
+                  "alert",
+                  "alert-{$this->status}", 
+                  // Look, a conditional class!
+                  [ "alert-dismissible fade show" => $this->dismissible ]
+              )?>" 
+              role="alert">
+             <h4 class="alert-heading"><?$this->renderPart($this->title)?></h4>
+             
+             // Only show this button if dismissible.
+             <?if($this->dismissible):?>
+             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+             <?endif;?>
+
+             <?$this->renderPart($this->title)?>
+         </div>
+         <?
+     }
+ }
+ 
+``` 
+
+Pay attention to the `[ "alert-dismissible fade show" => $this->dismissible ]` array parameter, this is a special case supported by the `->class()` method, it basically adds the key as a class if the value evaluates to true. The array can have as many key value pairs as you like.
+
+Now, to finish this part, let's give the component user the capability to add his own classes:
+
+```php
+<?php
+ 
+ namespace Nev\Tests\SampleViews;
+ 
+ use Nev\Html;
+ use Nev\View;
+ 
+ final class AlertComponent extends View
+ {
+     use Html;
+     
+     // Some content omitted...
+     protected $status = 'info';
+     
+     protected $dismissible = true;
+     
+    /**
+    * @var array|string 
+    */
+     protected $className = [];
+     
+     protected function render()
+     { ?>
+         <div class="<?=$this->classes(
+                $this->className,    
+                "alert",
+                "alert-{$this->status}", 
+                // Look, a conditional class!
+                [ "alert-dismissible fade show" => $this->dismissible ]
+              )?>" 
+              role="alert">
+             <h4 class="alert-heading"><?$this->renderPart($this->title)?></h4>
+             
+             // Only show this button if dismissible.
+             <?if($this->dismissible):?>
+             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+             <?endif;?>
+
+             <?$this->renderPart($this->title)?>
+         </div>
+         <?
+     }
+ }
+ 
+```
+
+This will allow the component user to add his own classes, see sample usages:
+
+```php
+<?php
+
+AlertComponent::show([
+    'dismissible' => false,
+    'status' => 'warning',
+    'className' => 'my-custom-class',
+    'body' => 'This string will be echoed!'
+]);
+
+// Or provide an array for more fun!
+AlertComponent::show([
+    'dismissible' => false,
+    'status' => 'warning',
+    'className' => [
+        // Numerical index are just appended.
+        'my-custom-class',
+        'my-other-custom-class',
+        // String keys are appended if the value evaluates to true.
+        'this-class-will-be-added' => $someTruthyValue,
+        'this-class-will-be-ignored' => $someFalsyValue,
+    ],
+    'body' => 'This string will be echoed!'
+]);
+
+```
+
+### Extra properties
+
+Sometimes you want to allow the user to add custom HTML attributes to your component. You could, of course, add an `attrs` attribute to the class. But here's an alternative:
+
+```php
+<?php
+ 
+ namespace Nev\Tests\SampleViews;
+ 
+ use Nev\Html;
+ use Nev\View;
+ 
+ final class AlertComponent extends View
+ {
+    use Html;
+     
+    protected $title;
+      
+    protected $body;
+      
+    protected $status = 'info';
+    
+    protected $dismissible = true;
+     
+    /**
+    * @var array|string 
+    */
+     protected $className = [];
+     
+     protected function render()
+     { 
+         // Get the non-declared attributes received at the constructor as a key/value array.
+         $attrs = $this->extraProperties();
+         ?>
+         <!-- Render the attributes. -->
+         <div <?=$this->attrs($attrs)?> 
+            class="<?=$this->classes(
+                $this->className,    
+                "alert",
+                "alert-{$this->status}", 
+                // Look, a conditional class!
+                [ "alert-dismissible fade show" => $this->dismissible ]
+              )?>" 
+              role="alert">
+             <h4 class="alert-heading"><?$this->renderPart($this->title)?></h4>
+             
+             // Only show this button if dismissible.
+             <?if($this->dismissible):?>
+             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+             <?endif;?>
+
+             <?$this->renderPart($this->title)?>
+         </div>
+         <?
+     }
+ }
+```
+
+The `extraProperties()` method will return all the attributes sent to the constructor that are not declared in the component class. That will allow to do things like this:
+
+```php
+<?php
+
+AlertComponent::show([
+    // These will be rendered as attributes.
+    'id' => 'my-id',
+    'data-some-custom-attr' => "Some cool value",
+    'title' => "Some cool title for this element!",
+    
+    // Since this attribute is declared in the class, extraProperties() won't return it.
+    'body' => 'This string will be echoed!',
+]);
+```
+
+### Finishing things with Style
+
+Finally, to complete the personalization options, there is a helper method that allows you to render a key/value pair array as style-valid CSS string.
+
+```php
+<?php
+
+AlertComponent::show([
+    // These will be rendered as attributes.
+    'id' => 'my-id',
+    'data-some-custom-attr' => "Some cool value",
+    'title' => "Some cool title for this element!",
+    'style' => $this->style([ 'float' => 'right' ]),
+    
+    // Since this attribute is declared in the class, extraProperties() won't return it.
+    'body' => 'This string will be echoed!',
+]);
+```
