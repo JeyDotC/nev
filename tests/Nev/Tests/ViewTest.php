@@ -8,7 +8,6 @@ use Nev\Tests\SampleViews\CompositeView;
 use Nev\Tests\SampleViews\SomeViewModel;
 use Nev\View;
 use PHPUnit\Framework\TestCase;
-use const DATA_DIR;
 
 /**
  * Description of ViewTest
@@ -21,39 +20,37 @@ class ViewTest extends TestCase {
      * 
      * @dataProvider displayProvider
      * 
-     * @param BasicView $view
-     * @param mixed $model
+     * @param View $view
      * @param string $expectedResult
      */
-    public function testDisplay(View $view, $model, $expectedResult) {
+    public function testDisplay(View $view, $expectedResult) {
         // Act
         ob_start();
-        $view->display($model);
+        $view->display();
         $result = ob_get_clean();
        
         // Assert
-        $this->assertEquals($expectedResult, $result);
+        $this->assertXmlStringEqualsXmlFile($expectedResult, $result);
     }
 
     /**
      * 
      * @dataProvider displayProvider
      * 
-     * @param BasicView $view
-     * @param mixed $model
+     * @param View $view
      * @param string $expectedResult
      */
-    public function testDisplayAndGet(View $view, $model, $expectedResult) {
+    public function testDisplayAndGet(View $view, $expectedResult) {
         // Act
-        $result = $view->displayAndGet($model);
+        $result = $view->displayAndGet();
 
         // Assert
-        $this->assertEquals($expectedResult, $result);
+        $this->assertXmlStringEqualsXmlFile($expectedResult, $result);
     }
 
     public function testShow() {
         // Arrange
-        $expectedResult = file_get_contents(DATA_DIR . '/BasicView-display.html');
+        $expectedResult = $this->getExpectedData('BasicView-display.html');
 
         // Act
         ob_start();
@@ -61,7 +58,7 @@ class ViewTest extends TestCase {
         $result = ob_get_clean();
 
         // Assert
-        $this->assertEquals($expectedResult, $result);
+        $this->assertXmlStringEqualsXmlFile($expectedResult, $result);
     }
 
     public function testCreate() {
@@ -76,24 +73,24 @@ class ViewTest extends TestCase {
         return [
             BasicView::class => [
                 new BasicView(),
-                null,
-                file_get_contents(DATA_DIR . '/BasicView-display.html')
+                $this->getExpectedData('BasicView-display.html')
             ],
             'ChildVew extends ParentView' => [
-                new ChildView(),
-                new SomeViewModel(1, 'John Doe'),
-                file_get_contents(DATA_DIR . '/ChildView-display.html')
+                new ChildView(new SomeViewModel(1, 'John Doe')),
+                $this->getExpectedData('ChildView-display.html')
             ],
             'Composite View' => [
-                new CompositeView(),
-                [
+                new CompositeView([
                     new SomeViewModel(1, 'Johny', 'Be good'),
                     new SomeViewModel(2, 'Jenny', 'Be cool!'),
                     new SomeViewModel(3, 'Jinny', 'Be smooth'),
-                ],
-                file_get_contents(DATA_DIR . '/CompositeView-display.html')
+                ]),
+                $this->getExpectedData('CompositeView-display.html')
             ]
         ];
     }
 
+    private function getExpectedData(string $fileName): string {
+        return __DIR__ . "/../../data/$fileName";
+    }
 }

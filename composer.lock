@@ -10,7 +10,7 @@
         {
             "name": "doctrine/instantiator",
             "version": "1.0.5",
-            "source": {
+            "source": { 
                 "type": "git",
                 "url": "https://github.com/doctrine/instantiator.git",
                 "reference": "8e884e78f9f0eb1329e445619e04456e64d8051d"

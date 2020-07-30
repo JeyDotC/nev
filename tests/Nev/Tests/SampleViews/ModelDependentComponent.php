@@ -24,9 +24,7 @@ class ModelDependentComponent extends View
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title"><?= $model->id ?>: <?= $model->name ?></h5>
-                <p class="card-text">
-                    <?= $model->description ?>
-                </p>
+                <p class="card-text"><?= $model->description ?></p>
                 <a href="#" class="btn btn-primary">Go somewhere</a>
             </div>
         </div>

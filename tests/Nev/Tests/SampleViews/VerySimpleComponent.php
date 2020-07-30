@@ -11,17 +11,15 @@ use Nev\View;
  */
 class VerySimpleComponent extends View
 {
-    protected function defaultProps(): array {
-        return [
-            'text' => '',
-        ];
-    }
+    /**
+     * @var string
+     */
+    protected $text = '';
 
     protected function render() {
-        $props = $this->props;
         ?>
         <div class="border border-danger rounded">
-            <p><?=$props->text?></p>
+            <p><?=$this->text?></p>
         </div>
         <?
     }
