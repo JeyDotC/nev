@@ -3,6 +3,7 @@
 namespace Nev\Tests;
 
 use Nev\Tests\SampleViews\BasicView;
+use Nev\Tests\SampleViews\BuildablePageView;
 use Nev\Tests\SampleViews\ChildView;
 use Nev\Tests\SampleViews\CompositeView;
 use Nev\Tests\SampleViews\SomeViewModel;
@@ -25,25 +26,8 @@ class ViewTest extends TestCase {
      */
     public function testDisplay(View $view, $expectedResult) {
         // Act
-        ob_start();
-        $view->display();
-        $result = ob_get_clean();
+        $result = $view->display();
        
-        // Assert
-        $this->assertXmlStringEqualsXmlFile($expectedResult, $result);
-    }
-
-    /**
-     * 
-     * @dataProvider displayProvider
-     * 
-     * @param View $view
-     * @param string $expectedResult
-     */
-    public function testDisplayAndGet(View $view, $expectedResult) {
-        // Act
-        $result = $view->displayAndGet();
-
         // Assert
         $this->assertXmlStringEqualsXmlFile($expectedResult, $result);
     }
@@ -53,9 +37,7 @@ class ViewTest extends TestCase {
         $expectedResult = $this->getExpectedData('BasicView-display.html');
 
         // Act
-        ob_start();
-        BasicView::show();
-        $result = ob_get_clean();
+        $result = BasicView::show();
 
         // Assert
         $this->assertXmlStringEqualsXmlFile($expectedResult, $result);
@@ -79,11 +61,13 @@ class ViewTest extends TestCase {
                 new ChildView(new SomeViewModel(1, 'John Doe')),
                 $this->getExpectedData('ChildView-display.html')
             ],
-            'Composite View' => [
-                new CompositeView([
-                    new SomeViewModel(1, 'Johny', 'Be good'),
-                    new SomeViewModel(2, 'Jenny', 'Be cool!'),
-                    new SomeViewModel(3, 'Jinny', 'Be smooth'),
+            'Composite Views' => [
+                new BuildablePageView([
+                   'body' => new CompositeView([
+                       new SomeViewModel(1, 'Johny', 'Be good'),
+                       new SomeViewModel(2, 'Jenny', 'Be cool!'),
+                       new SomeViewModel(3, 'Jinny', 'Be smooth'),
+                   ]),
                 ]),
                 $this->getExpectedData('CompositeView-display.html')
             ]

@@ -9,19 +9,16 @@ use Nev\View;
  *
  * @author Win 10
  */
-class VerySimpleComponent extends View
-{
+class VerySimpleComponent extends View {
     /**
      * @var string
      */
     protected $text = '';
 
-    protected function render() {
-        ?>
+    public function render() { ?>
         <div class="border border-danger rounded">
-            <p><?=$this->text?></p>
+            <p><?= $this->text ?></p>
         </div>
-        <?
-    }
+    <? }
 
 }

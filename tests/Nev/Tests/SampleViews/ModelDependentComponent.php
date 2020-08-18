@@ -1,4 +1,5 @@
 <?php
+
 namespace Nev\Tests\SampleViews;
 
 use Nev\View;
@@ -9,16 +10,15 @@ use Nev\View;
  *
  * @author Win 10
  */
-class ModelDependentComponent extends View
-{
+class ModelDependentComponent extends View {
 
     /**
      *
-     * @var SomeViewModel 
+     * @var SomeViewModel
      */
     protected $model;
 
-    protected function render() {
+    public function render() {
         $model = $this->model;
         ?>
         <div class="card">

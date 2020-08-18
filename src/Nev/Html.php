@@ -9,25 +9,25 @@ namespace Nev;
 trait Html
 {
 
-    public function js($script)
+    public function js(...$scripts)
     {
-        ?>
-        <script type="text/javascript" src="<?= $script ?>"></script>
-        <?php
-        return $this;
+        return implode(PHP_EOL, array_map(function ($script){
+            return "<script type=\"text/javascript\" src=\"$script\"></script>";
+        }, $scripts));
     }
 
-    public function css($css)
+    public function css(...$cssFiles)
     {
-        ?>
-        <link type="text/css" rel="stylesheet" href="<?= $css ?>"/>
-        <?php
-        return $this;
+        return implode(PHP_EOL, array_map(function ($css){
+            return "<link type=\"text/css\" rel=\"stylesheet\" href=\"$css\"/>";
+        }, $cssFiles));
     }
 
     public function attrs(array $attrs)
     {
-        return $this->renderAttributes($attrs);
+        return implode(' ', array_map(function ($value, $name){
+            return "$name=\"$value\"";
+        }, $attrs, array_keys($attrs)));
     }
 
     public function style(array $style)
@@ -59,12 +59,4 @@ trait Html
 
         return implode(' ', $resultingClasses);
     }
-
-    private function renderAttributes(array $attributes)
-    {
-        foreach ($attributes as $name => $value) {
-            echo "$name=\"$value\" ";
-        }
-    }
-
 }
