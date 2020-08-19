@@ -69,4 +69,8 @@ abstract class View {
     }
 
     protected abstract function render();
+
+    public function __toString() {
+        return $this->display();
+    }
 }

@@ -32,6 +32,18 @@ class ViewTest extends TestCase {
         $this->assertXmlStringEqualsXmlFile($expectedResult, $result);
     }
 
+    /**
+     *
+     * @dataProvider displayProvider
+     *
+     * @param View $view
+     * @param string $expectedResult
+     */
+    public function testToString(View $view, $expectedResult) {
+        // Assert
+        $this->assertXmlStringEqualsXmlFile($expectedResult, (string)$view);
+    }
+
     public function testShow() {
         // Arrange
         $expectedResult = $this->getExpectedData('BasicView-display.html');
