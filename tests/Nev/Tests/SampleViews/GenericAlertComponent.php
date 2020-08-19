@@ -5,8 +5,7 @@ namespace Nev\Tests\SampleViews;
 use Nev\Html;
 use Nev\View;
 
-class GenericAlertComponent extends View
-{
+class GenericAlertComponent extends View {
     use Html;
 
     protected $attrs = [];
@@ -15,31 +14,27 @@ class GenericAlertComponent extends View
      */
     protected $className = [];
     protected $status = 'info';
-    protected $dismissible = true;
+    protected $dismissible = false;
     protected $title = '';
     protected $body = '';
 
-    protected function render()
-    {
+    public function render() {
         $attrs = $this->extraProperties();
+        $classes = $this->classes($this->className, "alert alert-{$this->status}", ['alert-dismissible fade show' => $this->dismissible]);
         ?>
-        <div <?= $this->attrs($attrs) ?>
-                class="<?= $this->classes($this->className, "alert alert-{$this->status}", ['alert-dismissible fade show' => $this->dismissible]) ?>"
-                role="alert">
+        <div <?= $this->attrs($attrs) ?> class="<?= $classes ?>" role="alert">
 
-            <?
-            if ($this->title): ?>
-                <h4 class="alert-heading"><? $this->renderPart($this->title) ?></h4>
-            <? endif; ?>
+            <?= self::drawIf($this->title, function () { ?>
+                <h4 class="alert-heading"><?= self::draw($this->title) ?></h4>
+            <? }) ?>
 
-            <?
-            if ($this->dismissible): ?>
+            <?= self::drawIf($this->dismissible, function () { ?>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">x</span>
                 </button>
-            <? endif; ?>
+            <? }) ?>
 
-            <? $this->renderPart($this->body) ?>
+            <?= self::draw($this->body) ?>
         </div>
         <?
     }
